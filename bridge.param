@@ -5,11 +5,11 @@ topics:
     queue_size: 1  # Queue size
 
   -
-    topic: /sentosa/command/gimbal  # Topic name on both ROS 1 and ROS 2
+    topic: /raffles/command/gimbal  # Topic name on both ROS 1 and ROS 2
     type: geometry_msgs/msg/Twist  # Type of topic to bridge
     queue_size: 1  # Queue size
   -
-    topic: /sentosa/gimbal  # Topic name on both ROS 1 and ROS 2
+    topic: /raffles/gimbal  # Topic name on both ROS 1 and ROS 2
     type: geometry_msgs/msg/TwistStamped  # Type of topic to bridge
     queue_size: 1  # Queue size    
     qos:

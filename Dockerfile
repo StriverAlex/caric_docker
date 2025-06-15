@@ -1,6 +1,11 @@
 # Use osrf/ros:noetic-desktop-full as the base image
 FROM xuxinhang007/caric:v1
 
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros-latest.list
+
 # Update and install additional dependencies
 RUN apt-get update && \
     apt-get install -y \

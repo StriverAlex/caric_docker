@@ -51,7 +51,7 @@
     <node name="mission_manager" pkg="caric_mission" type="caric_mission_mission_manager_node" required="true" respawn="false"
           output="screen" launch-prefix="bash -c 'sleep delay_launch; echo LAUNCHING MISSION MANAGER...; $0 $@'">
           
-          <param name="mission_duration" type="double" value="600.0"/>
+          <param name="mission_duration" type="double" value="1000.0"/>
           <param name="log_dir"          type="string" value="$(find caric_mission)/logs/mbs/"/>
           <rosparam param="T_B_S">   [0.0, 0.0, 0.2, 1.0, 0.0, 0.0, 0.0]</rosparam>
           <rosparam param="T_S_L">   [0.0, 0.0, -0.03585, 1.0, 0.0, 0.0, 0.0]</rosparam>
@@ -135,7 +135,7 @@
         <arg name="ppcom_config"      value="$(find rotors_description)/ppcom_network/$(arg ppcom_file)" />
         <arg name="ppcom_hz"          value="$(arg ppcom_hz)" />
 
-        <arg name="start_x"           value="7.0" />
+        <arg name="start_x"           value="6.0" />
         <arg name="start_y"           value="6.7" />
 
     </include>
@@ -153,7 +153,7 @@
         <arg name="ppcom_config"      value="$(find rotors_description)/ppcom_network/$(arg ppcom_file)" />
         <arg name="ppcom_hz"          value="$(arg ppcom_hz)" />
 
-        <arg name="start_x"           value="+12.0" />
+        <arg name="start_x"           value="+10.0" />
         <arg name="start_y"           value="-5.0" />
 
     </include>
