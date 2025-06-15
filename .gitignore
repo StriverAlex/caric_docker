@@ -1,0 +1,18 @@
+# Build artifacts
+ws_caric/build/
+ws_caric/devel/
+ws_caric/logs/
+ws_caric/.catkin_tools/
+
+# Object files
+*.o
+
+# IDE files
+.vscode/
+
+# Error logs
+ERROR
+
+# LKH compiled files
+libraries/LKH-3.0.6/LKH
+libraries/LKH-3.0.6/SRC/OBJ/*.o
