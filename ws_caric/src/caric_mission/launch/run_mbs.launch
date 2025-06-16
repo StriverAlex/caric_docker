@@ -51,7 +51,7 @@
     <node name="mission_manager" pkg="caric_mission" type="caric_mission_mission_manager_node" required="true" respawn="false"
           output="screen" launch-prefix="bash -c 'sleep delay_launch; echo LAUNCHING MISSION MANAGER...; $0 $@'">
           
-          <param name="mission_duration" type="double" value="1000.0"/>
+          <param name="mission_duration" type="double" value="2000.0"/>
           <param name="log_dir"          type="string" value="$(find caric_mission)/logs/mbs/"/>
           <rosparam param="T_B_S">   [0.0, 0.0, 0.2, 1.0, 0.0, 0.0, 0.0]</rosparam>
           <rosparam param="T_S_L">   [0.0, 0.0, -0.03585, 1.0, 0.0, 0.0, 0.0]</rosparam>

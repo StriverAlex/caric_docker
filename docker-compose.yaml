@@ -44,6 +44,7 @@ services:
       # - /var/run/docker.sock:/var/run/docker.sock # access docker API for container name    
       - ./ws_caric:/root/ws_caric:rw  # Mount your local src directory
       - ./libraries:/root/libraries:rw
+      - ./bridge_scripts:/root/bridge_scripts:rw
     # runtime: nvidia
     privileged: true
     stdin_open: true
@@ -84,6 +85,7 @@ services:
       - ./libraries:/root/libraries:rw
       - ./bridge.param:/root/ros1_bridge/bridge.param
       - ./domain_bridge.yaml:/root/ros1_bridge/domain_bridge.yaml
+      - ./bridge_scripts:/root/bridge_scripts:rw
     # runtime: nvidia
     privileged: true
     stdin_open: true
@@ -128,6 +130,7 @@ services:
       # - ./libraries:/root/libraries:rw
       - ./bridge.param:/root/ros1_bridge/bridge.param
       - ./domain_bridge.yaml:/root/ros1_bridge/domain_bridge.yaml
+      - ./bridge_scripts:/root/bridge_scripts:rw
     # runtime: nvidia
     privileged: true
     stdin_open: true

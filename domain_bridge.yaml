@@ -1,52 +1,108 @@
-name: my_domain_bridge
-from_domain: 0
-to_domain: 1
+# name: my_domain_bridge
+# from_domain: 0
+# to_domain: 1
+# topics:
+#   # Bridge "/foo/chatter" topic from doman ID 2 to domain ID 3
+#   # Automatically detect QoS settings and default to 'keep_last' history with depth 10
+#   /raffles/gimbal:
+#     type: geometry_msgs/msg/TwistStamped
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: True
+
+#   /raffles/command/gimbal:
+#     type: geometry_msgs/msg/Twist
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: True
+
+
+#   # Bridge "/clock" topic from doman ID 2 to domain ID 3,
+#   # Override durability to be 'volatile' and override depth to be 1
+#   clock:
+#     type: rosgraph_msgs/msg/Clock
+#     qos:
+#       durability: volatile
+#       depth: 1
+
+#   # Bridge "/clock" topic from doman ID 2 to domain ID 6
+#   # Automatically detect QoS settings and override history to 'keep_all'
+#   # clock:
+#   #   type: rosgraph_msgs/msg/Clock
+#   #   to_domain: 6
+#   #   qos:
+#   #     history: keep_all
+
+#   # Bridge "/chitter" topic from domain ID 2 to domain ID 3 with the name "/chatter"
+#   # chitter:
+#   #   type: example_interfaces/msg/String
+#   #   remap: chatter
+
+# # services:
+#   # Bridge "add_two_ints" service from domain ID 4 to domain ID 6
+#   # add_two_ints:
+#   #   type: example_interfaces/srv/AddTwoInts
+#   #   from_domain: 4
+#   #   to_domain: 6
+
+# # actions:
+#   # Bridge "fibonacci" action from domain ID 1 to domain ID 3
+#   # fibonacci:
+#   #   type: example_interfaces/action/Fibonacci
+#   #   from_domain: 1
+
+
 topics:
-  # Bridge "/foo/chatter" topic from doman ID 2 to domain ID 3
-  # Automatically detect QoS settings and default to 'keep_last' history with depth 10
-  /raffles/gimbal:
+  # 现有gimbal配置保持不变
+  /sentosa/gimbal:
     type: geometry_msgs/msg/TwistStamped
     from_domain: 0
     to_domain: 1
     bidirectional: True
 
-  /raffles/command/gimbal:
+  /sentosa/command/gimbal:
     type: geometry_msgs/msg/Twist
     from_domain: 0
     to_domain: 1
     bidirectional: True
 
-
-  # Bridge "/clock" topic from doman ID 2 to domain ID 3,
-  # Override durability to be 'volatile' and override depth to be 1
-  clock:
-    type: rosgraph_msgs/msg/Clock
+  # PPCom JSON主题桥接 (从Domain 0到Domain 1)
+  /ppcom_topology_json:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
     qos:
       durability: volatile
-      depth: 1
+      depth: 10
 
-  # Bridge "/clock" topic from doman ID 2 to domain ID 6
-  # Automatically detect QoS settings and override history to 'keep_all'
-  # clock:
-  #   type: rosgraph_msgs/msg/Clock
-  #   to_domain: 6
-  #   qos:
-  #     history: keep_all
+  /ppcom_topology_doa_json:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
+    qos:
+      durability: volatile
+      depth: 10
 
-  # Bridge "/chitter" topic from domain ID 2 to domain ID 3 with the name "/chatter"
-  # chitter:
-  #   type: example_interfaces/msg/String
-  #   remap: chatter
+  # PPCom转换后的话题 (从Domain 1到Domain 0，如果需要反向通信)
+  /ppcom_topology_converted:
+    type: std_msgs/msg/String
+    from_domain: 1
+    to_domain: 0
+    bidirectional: true
 
-# services:
-  # Bridge "add_two_ints" service from domain ID 4 to domain ID 6
-  # add_two_ints:
-  #   type: example_interfaces/srv/AddTwoInts
-  #   from_domain: 4
-  #   to_domain: 6
+  /ppcom_topology_doa_converted:
+    type: std_msgs/msg/String
+    from_domain: 1
+    to_domain: 0
+    bidirectional: true
 
-# actions:
-  # Bridge "fibonacci" action from domain ID 1 to domain ID 3
-  # fibonacci:
-  #   type: example_interfaces/action/Fibonacci
-  #   from_domain: 1
+  # PPCom服务相关话题 (如果需要跨域服务)
+  /create_ppcom_topic_request:
+    type: std_msgs/msg/String
+    from_domain: 1
+    to_domain: 0
+
+  /create_ppcom_topic_response:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
