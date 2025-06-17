@@ -1,16 +1,16 @@
 #!/bin/bash
-# 文件位置: /root/bridge_scripts/launch/start_system.sh
-# 在主机上运行，协调所有容器
+# File location: /root/bridge_scripts/launch/start_system.sh
+# Running on the host machine, coordinating all containers
 
-echo "启动完整PPCom桥接系统..."
+echo "Starting the full PPCom bridge system..."
 
-# 检查容器状态
+# Check container status
 if ! docker ps | grep -q ros_caric_container_1; then
-    echo "✗ CARIC容器未运行，请先执行: docker compose up"
+    echo "✗ CARIC container is not running, please run: docker compose up"
     exit 1
 fi
 
-echo "=== 启动ROS1转换器 ==="
+echo "=== Starting ROS1 converter ==="
 docker exec -d ros_caric_container_1 bash -c "
     chmod +x /root/bridge_scripts/launch/start_ros1_converter.sh
     /root/bridge_scripts/launch/start_ros1_converter.sh
@@ -18,7 +18,7 @@ docker exec -d ros_caric_container_1 bash -c "
 
 sleep 3
 
-echo "=== 启动ROS1-ROS2桥接 ==="
+echo "=== Starting ROS1-ROS2 bridge ==="
 docker exec -d ros_caric_bridge bash -c "
     source /opt/ros/humble/setup.bash
     rosparam load bridge.param
@@ -27,7 +27,7 @@ docker exec -d ros_caric_bridge bash -c "
 
 sleep 3
 
-echo "=== 启动域桥接 ==="
+echo "=== Starting domain bridge ==="
 docker exec -d ros_caric_bridge bash -c "
     source /opt/ros/humble/setup.bash
     ros2 run domain_bridge domain_bridge domain_bridge.yaml
@@ -35,7 +35,7 @@ docker exec -d ros_caric_bridge bash -c "
 
 sleep 3
 
-echo "=== 启动ROS2系统 ==="
+echo "=== Starting ROS2 system ==="
 docker exec -d ros_caric_drone bash -c "
     chmod +x /root/bridge_scripts/launch/start_ros2_system.sh
     /root/bridge_scripts/launch/start_ros2_system.sh
@@ -43,21 +43,21 @@ docker exec -d ros_caric_drone bash -c "
 
 sleep 5
 
-echo "=== 系统状态检查 ==="
-echo "检查ROS1话题:"
+echo "=== System status check ==="
+echo "Checking ROS1 topics:"
 docker exec ros_caric_container_1 bash -c "source /root/ws_caric/devel/setup.bash && rostopic list | grep ppcom"
 
-echo "检查ROS2桥接话题:"
+echo "Checking ROS2 bridge topics:"
 docker exec ros_caric_bridge bash -c "source /opt/ros/humble/setup.bash && ros2 topic list | grep ppcom"
 
-echo "检查ROS2 Domain 1话题:"
+echo "Checking ROS2 Domain 1 topics:"
 docker exec ros_caric_drone bash -c "export ROS_DOMAIN_ID=1 && ros2 topic list | grep -E '(ppcom|ping_message)'"
 
-echo "PPCom桥接系统启动完成!"
+echo "PPCom bridge system startup completed!"
 echo ""
-echo "监控命令:"
-echo "  # 监控raffles消息"
+echo "Monitoring commands:"
+echo "  # Monitoring raffles messages"
 echo "  docker exec -it ros_caric_drone bash -c 'export ROS_DOMAIN_ID=1 && ros2 topic echo /ping_message/raffles'"
 echo ""
-echo "  # 查看所有PPCom话题"
+echo "  # View all PPCom topics"
 echo "  docker exec -it ros_caric_drone bash -c 'export ROS_DOMAIN_ID=1 && ros2 topic list | grep ping_message'"

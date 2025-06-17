@@ -1,39 +1,39 @@
 #!/bin/bash
-# 文件位置: /root/bridge_scripts/launch/start_ros1_converter.sh
-# 在ros_caric_container_1容器中运行
+# File location: /root/bridge_scripts/launch/start_ros1_converter.sh
+# Running in ros_caric_container_1 container
 
-echo "启动ROS1 PPCom转换器..."
+echo "Starting ROS1 PPCom converter..."
 
-# 进入ROS1工作空间
+# Enter ROS1 workspace
 cd /root/ws_caric
 
-# 设置完整的ROS环境
+# Set up complete ROS environment
 source /opt/ros/noetic/setup.bash
 source devel/setup.bash
 
-# 验证环境
-echo "验证ROS环境..."
-if ! python3 -c "from rotors_comm.msg import PPComTopology; print('✓ ROS环境正确')" 2>/dev/null; then
-    echo "✗ ROS环境设置失败"
-    echo "请确保:"
-    echo "1. 工作空间已编译: catkin build"
-    echo "2. 环境已设置: source devel/setup.bash"
+# Verify environment
+echo "Verifying ROS environment..."
+if ! python3 -c "from rotors_comm.msg import PPComTopology; print('✓ ROS environment correct')" 2>/dev/null; then
+    echo "✗ ROS environment setup failed"
+    echo "Please ensure:"
+    echo "1. Workspace is compiled: catkin build"
+    echo "2. Environment is set: source devel/setup.bash"
     exit 1
 fi
 
-# 检查脚本文件
+# Check script file
 if [ ! -f "scripts/ppcom_bridge/ros1_converter.py" ]; then
-    echo "✗ 转换器脚本不存在: scripts/ppcom_bridge/ros1_converter.py"
+    echo "✗ Converter script does not exist: scripts/ppcom_bridge/ros1_converter.py"
     exit 1
 fi
 
-# 等待PPCom话题（如果CARIC仿真正在运行）
-echo "等待PPCom话题..."
+# Wait for PPCom topic (if CARIC simulation is running)
+echo "Waiting for PPCom topic..."
 timeout=30
 count=0
 while [ $count -lt $timeout ]; do
     if rostopic list | grep -q ppcom; then
-        echo "✓ 发现PPCom话题"
+        echo "✓ PPCom topic detected"
         break
     fi
     
@@ -41,15 +41,15 @@ while [ $count -lt $timeout ]; do
     sleep 1
     
     if [ $((count % 5)) -eq 0 ]; then
-        echo "等待PPCom话题... ($count/$timeout)"
+        echo "Waiting for PPCom topic... ($count/$timeout)"
     fi
 done
 
 if [ $count -eq $timeout ]; then
-    echo "⚠ 未发现PPCom话题，但仍然启动转换器"
-    echo "请确保CARIC仿真已启动: roslaunch caric_baseline run.launch scenario:=mbs"
+    echo "⚠ PPCom topic not detected, but still starting converter"
+    echo "Please ensure CARIC simulation is started: roslaunch caric_baseline run.launch scenario:=mbs"
 fi
 
-# 启动转换器
-echo "启动ROS1 PPCom转换器..."
+# Start converter
+echo "Starting ROS1 PPCom converter..."
 python3 scripts/ppcom_bridge/ros1_converter.py

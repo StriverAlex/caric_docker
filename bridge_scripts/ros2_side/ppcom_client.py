@@ -6,7 +6,7 @@ import os
 import random
 import string
 
-# 添加共享模块路径
+
 sys.path.insert(0, '/root/bridge_scripts')
 
 from std_msgs.msg import String
@@ -21,7 +21,7 @@ class PPComClientROS2(Node):
         self.robot_id = robot_id
         self.targets = targets
         
-        self.get_logger().info(f"PPCom客户端 {robot_id} 启动中...")
+        self.get_logger().info(f"PPCom client {robot_id} starting...")
         
         # PPCom服务接口
         self.service_request_pub = self.create_publisher(
@@ -38,7 +38,7 @@ class PPComClientROS2(Node):
         self.message_sub = self.create_subscription(
             String, f'/ping_message/{self.robot_id}', self.message_callback, 10)
         
-        self.get_logger().info(f"PPCom客户端 {robot_id} 启动完成")
+        self.get_logger().info(f"PPComclient {robot_id} started successfully!")
     
     def initial_registration(self):
         """初始注册"""
@@ -64,19 +64,19 @@ class PPComClientROS2(Node):
         request_msg.data = json.dumps(service_data.to_dict())
         self.service_request_pub.publish(request_msg)
         
-        self.get_logger().info(f"注册PPCom话题: {self.robot_id} -> {self.targets}")
+        self.get_logger().info(f"PPCom: {self.robot_id} -> {self.targets}")
     
     def service_response_callback(self, msg):
         """处理服务响应"""
         try:
             response_data = json.loads(msg.data)
-            self.get_logger().info(f"服务响应: {response_data.get('result', 'unknown')}")
+            self.get_logger().info(f"service response: {response_data.get('result', 'unknown')}")
         except Exception as e:
             self.get_logger().error(f"响应处理错误: {e}")
     
     def message_callback(self, msg):
         """处理接收到的消息"""
-        self.get_logger().info(f"[{self.robot_id}] 收到: {msg.data}")
+        self.get_logger().info(f"[{self.robot_id}] received: {msg.data}")
     
     def send_message(self):
         """发送消息"""
@@ -93,7 +93,7 @@ class PPComClientROS2(Node):
         msg.data = f'{self.get_name()} says hello at time {current_time}. Random Text: {result_str}!'
         
         self.message_pub.publish(msg)
-        self.get_logger().info(f"[{self.robot_id}] 发送: {msg.data}")
+        self.get_logger().info(f"[{self.robot_id}] send: {msg.data}")
 
 def main(args=None):
     rclpy.init(args=args)
@@ -119,7 +119,7 @@ def main(args=None):
     try:
         rclpy.spin(client)
     except KeyboardInterrupt:
-        client.get_logger().info("接收中断信号")
+        client.get_logger().info("receive interrupt signal")
     finally:
         client.destroy_node()
         rclpy.shutdown()
