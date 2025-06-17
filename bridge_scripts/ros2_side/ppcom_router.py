@@ -166,7 +166,7 @@ class PPComRouterROS2(Node):
                     relayed_count += 1
             
             if relayed_count > 0:
-                self.get_logger().debug(f"转发: {source_node} -> {relayed_count}个目标")
+                self.get_logger().debug(f"forward: {source_node} -> {relayed_count}targets")
     
     def service_request_callback(self, msg):
         """处理PPCom服务请求"""
@@ -174,7 +174,7 @@ class PPComRouterROS2(Node):
             request_data = json.loads(msg.data)
             service_data = PPComServiceData.from_dict(request_data)
             
-            self.get_logger().info(f"PPCom服务: {service_data.source} -> {service_data.targets}")
+            self.get_logger().info(f"PPCom service: {service_data.source} -> {service_data.targets}")
             
             # 处理'all'目标
             targets = service_data.targets.copy()
@@ -215,7 +215,7 @@ class PPComRouterROS2(Node):
                         target_topic = f"{topic_name}/{target}"
                         pub = self.create_publisher(String, target_topic, 10)
                         dialogue.add_target_publisher(target, pub)
-                        self.get_logger().info(f"创建发布器: {target_topic}")
+                        self.get_logger().info(f"create publisher: {target_topic}")
 
             # 发送响应
             response = {"result": "success!"}
@@ -224,7 +224,7 @@ class PPComRouterROS2(Node):
             self.service_response_pub.publish(response_msg)
             
         except Exception as e:
-            self.get_logger().error(f"服务处理错误: {e}")
+            self.get_logger().error(f"Service processing error: {e}")
             response = {"result": f"fail! Error: {str(e)}"}
             response_msg = String()
             response_msg.data = json.dumps(response)
@@ -237,7 +237,7 @@ def main(args=None):
     try:
         rclpy.spin(router)
     except KeyboardInterrupt:
-        router.get_logger().info("接收中断信号")
+        router.get_logger().info("receive interrupt signal")
     finally:
         router.destroy_node()
         rclpy.shutdown()

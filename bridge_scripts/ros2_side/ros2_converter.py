@@ -16,7 +16,7 @@ class PPComROS2Converter(Node):
     def __init__(self):
         super().__init__('ppcom_ros2_converter')
         
-        self.get_logger().info("PPCom ROS2转换器启动中...")
+        self.get_logger().info("PPCom ROS2 converter start...")
         
         # 订阅从bridge传来的JSON消息
         self.topo_json_sub = self.create_subscription(
@@ -33,7 +33,7 @@ class PPComROS2Converter(Node):
         # 存储最新的拓扑数据
         self.latest_topology = None
         
-        self.get_logger().info("PPCom ROS2转换器启动完成!")
+        self.get_logger().info("PPCom ROS2 converter start completely!")
     
     def topo_json_callback(self, msg):
         """处理拓扑JSON消息"""
@@ -45,10 +45,10 @@ class PPComROS2Converter(Node):
                 
                 # 转发给PPCom Router
                 self.topo_converted_pub.publish(msg)
-                self.get_logger().debug(f"转换拓扑: {len(topology_data.node_id)}节点")
+                self.get_logger().debug(f"convert topology: {len(topology_data.node_id)}node")
             
         except Exception as e:
-            self.get_logger().error(f"拓扑JSON转换错误: {e}")
+            self.get_logger().error(f"topology JSON convert failed: {e}")
     
     def topo_doa_json_callback(self, msg):
         """处理拓扑DOA JSON消息"""
@@ -64,10 +64,10 @@ class PPComROS2Converter(Node):
                 
                 # 转发给PPCom Router
                 self.topo_doa_converted_pub.publish(msg)
-                self.get_logger().debug(f"转换拓扑DOA: {len(topology_data.node_id)}节点")
+                self.get_logger().debug(f"conv topology DOA: {len(topology_data.node_id)}node")
             
         except Exception as e:
-            self.get_logger().error(f"拓扑DOA JSON转换错误: {e}")
+            self.get_logger().error(f" topology DOA JSON convert fail: {e}")
     
     def get_current_topology(self):
         """获取当前拓扑数据"""
@@ -80,7 +80,7 @@ def main(args=None):
     try:
         rclpy.spin(converter)
     except KeyboardInterrupt:
-        converter.get_logger().info("接收中断信号")
+        converter.get_logger().info("receive interrupt signal")
     finally:
         converter.destroy_node()
         rclpy.shutdown()
