@@ -4,57 +4,57 @@ import sys
 import os
 from std_msgs.msg import String
 
-# 导入ROS1包（只有在工作空间内才能成功导入）
+# Import ROS1 packages (only successful within workspace)
 from rotors_comm.msg import PPComTopology
 from caric_mission.srv import CreatePPComTopic, CreatePPComTopicResponse
 
 class PPComROS1Converter:
-    """ROS1 PPCom转换器 - 运行在工作空间内"""
+    """ROS1 PPCom Converter - Runs within the workspace"""
     
     def __init__(self):
         rospy.init_node('ppcom_ros1_converter', anonymous=False)
-        rospy.loginfo("PPCom ROS1转换器启动中...")
+        rospy.loginfo("Starting PPCom ROS1 converter...")
         
-        # 验证环境
+        # Verify environment
         self.verify_environment()
         
-        # 设置发布器 - 发布JSON格式用于桥接
+        # Set up publishers - publish JSON format for bridging
         self.topo_json_pub = rospy.Publisher('/ppcom_topology_json', String, queue_size=1)
         self.topo_doa_json_pub = rospy.Publisher('/ppcom_topology_doa_json', String, queue_size=1)
         
-        # 等待原始PPCom话题
+        # Wait for original PPCom topics
         self.wait_for_ppcom_topics()
         
-        # 设置订阅器 - 订阅原始PPCom话题
+        # Set up subscribers - subscribe to original PPCom topics
         self.topo_sub = rospy.Subscriber('/ppcom_topology', PPComTopology, self.topo_callback)
         self.topo_doa_sub = rospy.Subscriber('/ppcom_topology_doa', PPComTopology, self.topo_doa_callback)
         
-        # 设置服务代理
+        # Set up service proxy
         self.setup_service_proxy()
         
-        rospy.loginfo("PPCom ROS1转换器启动完成!")
+        rospy.loginfo("PPCom ROS1 converter startup completed!")
         
     def verify_environment(self):
-        """验证ROS环境是否正确"""
+        """Verify ROS environment is correct"""
         try:
-            # 测试包导入
+            # Test package import
             test_msg = PPComTopology()
-            rospy.loginfo("✓ rotors_comm包导入成功")
+            rospy.loginfo("✓ rotors_comm package imported successfully")
             
-            # 检查工作空间
+            # Check workspace
             package_path = os.environ.get('ROS_PACKAGE_PATH', '')
             if '/root/ws_caric' not in package_path:
-                rospy.logwarn("工作空间路径可能不正确")
+                rospy.logwarn("Workspace path may be incorrect")
             else:
-                rospy.loginfo("✓ 工作空间环境正确")
+                rospy.loginfo("✓ Workspace environment correct")
                 
         except Exception as e:
-            rospy.logfatal(f"环境验证失败: {e}")
+            rospy.logfatal(f"Environment verification failed: {e}")
             sys.exit(1)
     
     def wait_for_ppcom_topics(self):
-        """等待PPCom话题出现"""
-        rospy.loginfo("等待PPCom话题...")
+        """Wait for PPCom topics to appear"""
+        rospy.loginfo("Waiting for PPCom topics...")
         timeout = 30
         count = 0
         
@@ -64,34 +64,34 @@ class PPComROS1Converter:
             ppcom_topics = [t for t in topic_names if 'ppcom' in t.lower()]
             
             if ppcom_topics:
-                rospy.loginfo(f"发现PPCom话题: {ppcom_topics}")
+                rospy.loginfo(f"Discovered PPCom topics: {ppcom_topics}")
                 return
             
             count += 1
             rospy.sleep(1.0)
             if count % 5 == 0:
-                rospy.loginfo(f"等待PPCom话题... ({count}/{timeout})")
+                rospy.loginfo(f"Waiting for PPCom topics... ({count}/{timeout})")
         
-        rospy.logwarn("未发现PPCom话题，请确保CARIC仿真已启动")
+        rospy.logwarn("No PPCom topics found, ensure CARIC simulation is running")
     
     def setup_service_proxy(self):
-        """设置服务代理"""
+        """Set up service proxy"""
         try:
             rospy.wait_for_service('create_ppcom_topic', timeout=5.0)
             self.ppcom_service_proxy = rospy.ServiceProxy('create_ppcom_topic', CreatePPComTopic)
             
-            # 提供JSON版本的服务
+            # Provide JSON version service
             self.ppcom_service_json = rospy.Service(
                 'create_ppcom_topic_json', 
                 CreatePPComTopic, 
                 self.create_ppcom_topic_json_callback
             )
-            rospy.loginfo("✓ PPCom服务代理设置完成")
+            rospy.loginfo("✓ PPCom service proxy setup completed")
         except rospy.ROSException:
-            rospy.logwarn("原始PPCom服务不可用")
+            rospy.logwarn("Original PPCom service unavailable")
     
     def topo_callback(self, msg):
-        """转换PPComTopology消息为JSON"""
+        """Convert PPComTopology message to JSON"""
         try:
             json_data = {
                 'message_type': 'ppcom_topology',
@@ -105,13 +105,13 @@ class PPComROS1Converter:
             json_msg.data = json.dumps(json_data)
             self.topo_json_pub.publish(json_msg)
             
-            rospy.loginfo_throttle(10, f"转换拓扑: {len(msg.node_id)}节点")
+            rospy.loginfo_throttle(10, f"Converted topology: {len(msg.node_id)} nodes")
             
         except Exception as e:
-            rospy.logerr(f"拓扑转换错误: {e}")
+            rospy.logerr(f"Topology conversion error: {e}")
     
     def topo_doa_callback(self, msg):
-        """转换PPComTopology DOA消息为JSON"""
+        """Convert PPComTopology DOA message to JSON"""
         try:
             json_data = {
                 'message_type': 'ppcom_topology_doa',
@@ -125,20 +125,20 @@ class PPComROS1Converter:
             json_msg.data = json.dumps(json_data)
             self.topo_doa_json_pub.publish(json_msg)
             
-            rospy.loginfo_throttle(10, f"转换拓扑DOA: {len(msg.node_id)}节点")
+            rospy.loginfo_throttle(10, f"Converted topology DOA: {len(msg.node_id)} nodes")
             
         except Exception as e:
-            rospy.logerr(f"拓扑DOA转换错误: {e}")
+            rospy.logerr(f"Topology DOA conversion error: {e}")
     
     def create_ppcom_topic_json_callback(self, req):
-        """处理JSON版本的PPCom服务请求"""
+        """Handle JSON version PPCom service request"""
         try:
-            rospy.loginfo(f"PPCom服务请求: {req.source} -> {req.targets}")
+            rospy.loginfo(f"PPCom service request: {req.source} -> {req.targets}")
             response = self.ppcom_service_proxy(req)
-            rospy.loginfo(f"PPCom服务响应: {response.result}")
+            rospy.loginfo(f"PPCom service response: {response.result}")
             return response
         except Exception as e:
-            rospy.logerr(f"PPCom服务错误: {e}")
+            rospy.logerr(f"PPCom service error: {e}")
             response = CreatePPComTopicResponse()
             response.result = f"fail! Error: {str(e)}"
             return response
@@ -148,7 +148,7 @@ def main():
         converter = PPComROS1Converter()
         rospy.spin()
     except rospy.ROSInterruptException:
-        rospy.loginfo("PPCom ROS1转换器退出")
+        rospy.loginfo("PPCom ROS1 converter exited")
 
 if __name__ == '__main__':
     main()

@@ -1,0 +1,15 @@
+-
+  ros1_package_name: 'rotors_comm'
+  ros1_message_name: 'BoolStamped'
+  ros2_package_name: 'rotors_comm'
+  ros2_message_name: 'msg/BoolStamped'
+-
+  ros1_package_name: 'rotors_comm'
+  ros1_message_name: 'PPComTopology'
+  ros2_package_name: 'rotors_comm'
+  ros2_message_name: 'msg/PPComTopology'
+-
+  ros1_package_name: 'rotors_comm'
+  ros1_message_name: 'WindSpeed'
+  ros2_package_name: 'rotors_comm'
+  ros2_message_name: 'msg/WindSpeed'
