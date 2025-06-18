@@ -52,6 +52,61 @@
 #   #   from_domain: 1
 
 
+# topics:
+#   # 现有gimbal配置保持不变
+#   /sentosa/gimbal:
+#     type: geometry_msgs/msg/TwistStamped
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: True
+
+#   /sentosa/command/gimbal:
+#     type: geometry_msgs/msg/Twist
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: True
+
+#   # PPCom JSON主题桥接 (从Domain 0到Domain 1)
+#   /ppcom_topology_json:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+#     qos:
+#       durability: volatile
+#       depth: 10
+
+#   /ppcom_topology_doa_json:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+#     qos:
+#       durability: volatile
+#       depth: 10
+
+#   # PPCom转换后的话题 (从Domain 1到Domain 0，如果需要反向通信)
+#   /ppcom_topology_converted:
+#     type: std_msgs/msg/String
+#     from_domain: 1
+#     to_domain: 0
+#     bidirectional: true
+
+#   /ppcom_topology_doa_converted:
+#     type: std_msgs/msg/String
+#     from_domain: 1
+#     to_domain: 0
+#     bidirectional: true
+
+#   # PPCom服务相关话题 (如果需要跨域服务)
+#   /create_ppcom_topic_request:
+#     type: std_msgs/msg/String
+#     from_domain: 1
+#     to_domain: 0
+
+#   /create_ppcom_topic_response:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+
 topics:
   # 现有gimbal配置保持不变
   /sentosa/gimbal:
@@ -66,43 +121,44 @@ topics:
     to_domain: 1
     bidirectional: True
 
-  # PPCom JSON主题桥接 (从Domain 0到Domain 1)
-  /ppcom_topology_json:
-    type: std_msgs/msg/String
+  # 原生PPComTopology消息桥接
+  /ppcom_topology:
+    type: rotors_comm_msgs/msg/PPComTopology
     from_domain: 0
     to_domain: 1
     qos:
       durability: volatile
       depth: 10
 
-  /ppcom_topology_doa_json:
-    type: std_msgs/msg/String
+  /ppcom_topology_doa:
+    type: rotors_comm_msgs/msg/PPComTopology
     from_domain: 0
     to_domain: 1
     qos:
       durability: volatile
       depth: 10
 
-  # PPCom转换后的话题 (从Domain 1到Domain 0，如果需要反向通信)
-  /ppcom_topology_converted:
-    type: std_msgs/msg/String
-    from_domain: 1
-    to_domain: 0
-    bidirectional: true
-
-  /ppcom_topology_doa_converted:
-    type: std_msgs/msg/String
-    from_domain: 1
-    to_domain: 0
-    bidirectional: true
-
-  # PPCom服务相关话题 (如果需要跨域服务)
-  /create_ppcom_topic_request:
-    type: std_msgs/msg/String
-    from_domain: 1
-    to_domain: 0
-
-  /create_ppcom_topic_response:
+  # PPCom ping消息
+  /ping_message:
     type: std_msgs/msg/String
     from_domain: 0
     to_domain: 1
+    bidirectional: true
+
+  /ping_message/nanyang:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
+    bidirectional: true
+
+  /ping_message/raffles:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
+    bidirectional: true
+
+  /ping_message/sentosa:
+    type: std_msgs/msg/String
+    from_domain: 0
+    to_domain: 1
+    bidirectional: true

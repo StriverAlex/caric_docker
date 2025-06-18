@@ -1,3 +1,4 @@
+# bridge.param
 topics:
   - topic: /chatter
     type: std_msgs/msg/String
@@ -11,21 +12,39 @@ topics:
     type: geometry_msgs/msg/TwistStamped
     queue_size: 1
 
-  # 新增PPCom JSON桥接
-  - topic: /ppcom_topology_json
-    type: std_msgs/msg/String
-    queue_size: 1
+  # 添加原生PPComTopology消息桥接
+  - topic: /ppcom_topology
+    type: rotors_comm_msgs/msg/PPComTopology
+    queue_size: 10
     qos:
       history: keep_last
       depth: 10
       reliability: reliable
       durability: volatile
 
-  - topic: /ppcom_topology_doa_json
-    type: std_msgs/msg/String  
-    queue_size: 1
+  - topic: /ppcom_topology_doa
+    type: rotors_comm_msgs/msg/PPComTopology
+    queue_size: 10
     qos:
       history: keep_last
       depth: 10
       reliability: reliable
       durability: volatile
+
+  # 添加ping消息支持
+  - topic: /ping_message
+    type: std_msgs/msg/String
+    queue_size: 10
+
+  # 如果需要支持其他节点的ping消息
+  - topic: /ping_message/nanyang
+    type: std_msgs/msg/String
+    queue_size: 10
+
+  - topic: /ping_message/raffles
+    type: std_msgs/msg/String
+    queue_size: 10
+
+  - topic: /ping_message/sentosa
+    type: std_msgs/msg/String
+    queue_size: 10

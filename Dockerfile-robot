@@ -1,32 +1,78 @@
+# FROM osrf/ros:humble-desktop
+
+# # Set environment variables
+# # ENV DEBIAN_FRONTEND=noninteractive
+# # ENV ROS_DOMAIN_ID=0
+# # ENV LANG=en_US.UTF-8
+# # ENV LC_ALL=en_US.UTF-8
+
+# # # Install common tools and domain_bridge
+# # RUN apt-get update && apt-get install -y \
+# #     ros-humble-domain-bridge \
+# #     ros-humble-demo-nodes-cpp \
+# #     python3-colcon-common-extensions \
+# #     iputils-ping \
+# #     net-tools \
+# #     nano \
+# #     && rm -rf /var/lib/apt/lists/*
+
+# # # Create a workspace for additional packages (optional)
+# # RUN mkdir -p /root/ws/src
+# # WORKDIR /root/ws
+
+# # Source ROS in every shell
+# RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+# # RUN echo "source /root/ws/install/setup.bash" >> ~/.bashrc
+
+# # Build empty workspace (safe default)
+# # RUN . /opt/ros/humble/setup.bash && colcon build
+# COPY fastdds.xml /root/fastdds.xml
+
+# # Default command
+# CMD ["bash"]
 FROM osrf/ros:humble-desktop
 
-# Set environment variables
-# ENV DEBIAN_FRONTEND=noninteractive
-# ENV ROS_DOMAIN_ID=0
-# ENV LANG=en_US.UTF-8
-# ENV LC_ALL=en_US.UTF-8
+# Set environment variables 
+ENV DEBIAN_FRONTEND=noninteractive
+ENV ROS_DOMAIN_ID=0
+ENV LANG=en_US.UTF-8
+ENV LC_ALL=en_US.UTF-8
 
-# # Install common tools and domain_bridge
-# RUN apt-get update && apt-get install -y \
-#     ros-humble-domain-bridge \
-#     ros-humble-demo-nodes-cpp \
-#     python3-colcon-common-extensions \
-#     iputils-ping \
-#     net-tools \
-#     nano \
-#     && rm -rf /var/lib/apt/lists/*
+# Install common tools and dependencies 
+RUN apt-get update && apt-get install -y \
+    ros-humble-domain-bridge \
+    ros-humble-demo-nodes-cpp \
+    ros-humble-octomap-msgs \
+    python3-colcon-common-extensions \
+    iputils-ping \
+    net-tools \
+    nano \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
-# # Create a workspace for additional packages (optional)
-# RUN mkdir -p /root/ws/src
-# WORKDIR /root/ws
+# Create workspace 
+RUN mkdir -p /root/ws/src
+WORKDIR /root/ws
+
+# Clone and build caric_msg ROS2 package
+RUN cd /root/ws/src && \
+    git clone https://github.com/StriverAlex/caric_msg.git && \
+    cp -r caric_msg/ros2/* . && \
+    rm -rf caric_msg
+
+# Build the workspace
+RUN /bin/bash -c "source /opt/ros/humble/setup.bash && \
+    colcon build --cmake-args -DCMAKE_BUILD_TYPE=Release"
 
 # Source ROS in every shell
 RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-# RUN echo "source /root/ws/install/setup.bash" >> ~/.bashrc
+RUN echo "source /root/ws/install/setup.bash" >> ~/.bashrc
 
-# Build empty workspace (safe default)
-# RUN . /opt/ros/humble/setup.bash && colcon build
+# Copy FastDDS configuration
 COPY fastdds.xml /root/fastdds.xml
+
+# Set working directory
+WORKDIR /root
 
 # Default command
 CMD ["bash"]
