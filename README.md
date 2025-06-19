@@ -62,6 +62,10 @@ Open a new terminal and go into the ros_bridge container
 docker exec -it ros_caric_bridge bash
 rosparam load bridge.param #load the ros1-ros2 bridge parameter
 ros2 run ros1_bridge parameter_bridge #run ros1_bridge
+
+docker exec -it ros_caric_bridge bash
+cd /root/ros-humble-ros1-bridge
+ros2 run domain_bridge domain_bridge domain_bridge.yaml
 ```
 
 Open a new terminal of ros_bridge container and run ros2 domain bridge:
