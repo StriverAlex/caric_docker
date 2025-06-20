@@ -107,58 +107,134 @@
 #     from_domain: 0
 #     to_domain: 1
 
+# topics:
+#   # 现有gimbal配置保持不变
+#   /sentosa/gimbal:
+#     type: geometry_msgs/msg/TwistStamped
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: True
+
+#   /sentosa/command/gimbal:
+#     type: geometry_msgs/msg/Twist
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: True
+
+#   # 原生PPComTopology消息桥接
+#   /ppcom_topology:
+#     type: rotors_comm_msgs/msg/PPComTopology
+#     from_domain: 0
+#     to_domain: 1
+#     qos:
+#       durability: volatile
+#       depth: 10
+
+#   /ppcom_topology_doa:
+#     type: rotors_comm_msgs/msg/PPComTopology
+#     from_domain: 0
+#     to_domain: 1
+#     qos:
+#       durability: volatile
+#       depth: 10
+
+#   # PPCom ping消息
+#   /ping_message:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: true
+
+#   /ping_message/nanyang:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: true
+
+#   /ping_message/raffles:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: true
+
+#   /ping_message/sentosa:
+#     type: std_msgs/msg/String
+#     from_domain: 0
+#     to_domain: 1
+#     bidirectional: true
+
 topics:
-  # 现有gimbal配置保持不变
-  /sentosa/gimbal:
-    type: geometry_msgs/msg/TwistStamped
-    from_domain: 0
+  # PPCom Router与各UAV域的通信
+  
+  # Jurong (Domain 1)
+  /ppcom_to_jurong:
+    type: std_msgs/msg/String
+    from_domain: 10
     to_domain: 1
-    bidirectional: True
+    
+  /ppcom_from_jurong:
+    type: std_msgs/msg/String
+    from_domain: 1
+    to_domain: 10
+  
+  # Raffles (Domain 2)
+  /ppcom_to_raffles:
+    type: std_msgs/msg/String
+    from_domain: 10
+    to_domain: 2
+    
+  /ppcom_from_raffles:
+    type: std_msgs/msg/String
+    from_domain: 2
+    to_domain: 10
+  
+  # Changi (Domain 3)
+  /ppcom_to_changi:
+    type: std_msgs/msg/String
+    from_domain: 10
+    to_domain: 3
+    
+  /ppcom_from_changi:
+    type: std_msgs/msg/String
+    from_domain: 3
+    to_domain: 10
+  
+  # Sentosa (Domain 4)
+  /ppcom_to_sentosa:
+    type: std_msgs/msg/String
+    from_domain: 10
+    to_domain: 4
+    
+  /ppcom_from_sentosa:
+    type: std_msgs/msg/String
+    from_domain: 4
+    to_domain: 10
+  
+  # Nanyang (Domain 5)
+  /ppcom_to_nanyang:
+    type: std_msgs/msg/String
+    from_domain: 10
+    to_domain: 5
+    
+  /ppcom_from_nanyang:
+    type: std_msgs/msg/String
+    from_domain: 5
+    to_domain: 10
 
-  /sentosa/command/gimbal:
-    type: geometry_msgs/msg/Twist
-    from_domain: 0
-    to_domain: 1
-    bidirectional: True
-
-  # 原生PPComTopology消息桥接
-  /ppcom_topology:
-    type: rotors_comm_msgs/msg/PPComTopology
-    from_domain: 0
-    to_domain: 1
-    qos:
-      durability: volatile
-      depth: 10
-
-  /ppcom_topology_doa:
-    type: rotors_comm_msgs/msg/PPComTopology
-    from_domain: 0
-    to_domain: 1
-    qos:
-      durability: volatile
-      depth: 10
-
-  # PPCom ping消息
-  /ping_message:
+  # 与ROS1桥接 (Domain 0)
+  /ppcom_to_bridge:
+    type: std_msgs/msg/String
+    from_domain: 10
+    to_domain: 0
+    
+  /ppcom_from_bridge:
     type: std_msgs/msg/String
     from_domain: 0
-    to_domain: 1
-    bidirectional: true
+    to_domain: 10
 
-  /ping_message/nanyang:
-    type: std_msgs/msg/String
-    from_domain: 0
-    to_domain: 1
-    bidirectional: true
-
-  /ping_message/raffles:
-    type: std_msgs/msg/String
-    from_domain: 0
-    to_domain: 1
-    bidirectional: true
-
-  /ping_message/sentosa:
-    type: std_msgs/msg/String
-    from_domain: 0
-    to_domain: 1
-    bidirectional: true
+services:
+  # PPCom服务跨域访问
+  /create_ppcom_topic:
+    type: caric_mission/srv/CreatePPComTopic
+    from_domain: 1,2,3,4,5,0  # 所有UAV域可以访问
+    to_domain: 10            # Router域提供服务

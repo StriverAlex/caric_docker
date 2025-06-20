@@ -131,6 +131,7 @@ services:
       - ./bridge.param:/root/ros-humble-ros1-bridge/bridge.param
       - ./domain_bridge.yaml:/root/ros-humble-ros1-bridge/domain_bridge.yaml
       - ./bridge_scripts:/root/bridge_scripts:rw
+      - ./ppcom_scripts:/root/ppcom_scripts:rw
     # runtime: nvidia
     privileged: true
     stdin_open: true

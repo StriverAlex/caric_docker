@@ -12,7 +12,11 @@ topics:
     type: geometry_msgs/msg/TwistStamped
     queue_size: 1
 
-  # 添加原生PPComTopology消息桥接
+  - topic: /broadcast
+    type: std_msgs/msg/String
+    queue_size: 10
+    
+  # 添加拓扑消息桥接
   - topic: /ppcom_topology
     type: rotors_comm_msgs/msg/PPComTopology
     queue_size: 10
@@ -31,12 +35,11 @@ topics:
       reliability: reliable
       durability: volatile
 
-  # 添加ping消息支持
+  # PPCom ping消息支持
   - topic: /ping_message
     type: std_msgs/msg/String
     queue_size: 10
 
-  # 如果需要支持其他节点的ping消息
   - topic: /ping_message/nanyang
     type: std_msgs/msg/String
     queue_size: 10
